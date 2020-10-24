@@ -1,0 +1,7 @@
+**/db_*/**
+**/venv/**
+**/config.yaml
+**/__pycache__/**
+**/.idea/**
+**/.env/**
+**/db-info.yaml

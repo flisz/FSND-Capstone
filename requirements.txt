@@ -1,0 +1,13 @@
+arrow
+pyyaml
+pytest
+psycopg2
+pylint
+python-jose-cryptodome
+Flask-Cors
+flask
+flask-wtf
+flask-sqlalchemy
+flask-migrate
+flask-classful
+SQLAlchemy-utils
