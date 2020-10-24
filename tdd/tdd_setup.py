@@ -57,10 +57,19 @@ def tdd_setup_USER_HOME_isdir(setup):
 def tdd_setup_TEMPLATES_isdir(setup):
     """
     GIVEN: an setup tdd fixture
-    WHEN: setup.USER_HOME is accessed
+    WHEN: setup.TEMPLATES is accessed
     THEN: a string pointing to a valid directory is returned
     """
-    assert os.path.isdir(setup.USER_HOME)
+    assert os.path.isdir(setup.TEMPLATES)
+
+
+def tdd_setup_STATIC_FILES_isdir(setup):
+    """
+    GIVEN: an setup tdd fixture
+    WHEN: setup.STATIC_FILES is accessed
+    THEN: a string pointing to a valid directory is returned
+    """
+    assert os.path.isdir(setup.STATIC_FILES)
 
 
 def tdd_setup_ROOT_is_valid(setup):

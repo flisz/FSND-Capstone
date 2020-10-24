@@ -21,6 +21,7 @@ class SetupConfig:
         self.__properties['HOSTNAME'] = self.__init_host_name()
         self.__properties['USER_HOME'] = self.__init_user_home()
         self.__properties['TEMPLATES'] = self.__init_templates()
+        self.__properties['STATIC_FILES'] = self.__init_static_files()
         self.__properties['SECRET_KEY'] = self.__init_secret_key()
 
     @property
@@ -118,6 +119,17 @@ class SetupConfig:
             return templates
         else:
             raise NotADirectoryError(f'{templates} directory missing!')
+
+    @property
+    def STATIC_FILES(self):
+        return self.__properties['STATIC_FILES']
+
+    def __init_static_files(self):
+        static_files = os.path.join(self.ROOT, self.PROJECT_NAME, 'static')
+        if os.path.isdir(static_files):
+            return static_files
+        else:
+            raise NotADirectoryError(f'{static_files} directory missing!')
 
     @property
     def SECRET_KEY(self):
