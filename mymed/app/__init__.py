@@ -10,6 +10,7 @@ from flask import Flask
 from mymed.setup import SetupConfig
 from mymed.setup.loggers import LOGGERS
 from mymed.app.csrf import csrf
+from mymed.app.login import lm
 from mymed.db import db, init_db
 from mymed.views import init_views
 
@@ -35,7 +36,7 @@ def create_app(config_yaml=None):
     setup = SetupConfig(config_yaml=config_yaml)
 
     # start app setup
-    app = Flask(__name__, template_folder=setup.TEMPLATES)
+    app = Flask(__name__, template_folder=setup.TEMPLATES, static_folder=setup.STATIC_FILES)
     app.config['SETUP'] = deepcopy(setup)
     app.config['SECRET_KEY'] = deepcopy(setup.SECRET_KEY)
 

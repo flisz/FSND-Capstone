@@ -1,5 +1,6 @@
 
 from flask import render_template
+from flask_login import current_user
 from mymed.lib.loaders import get_views
 
 
@@ -26,8 +27,8 @@ def register_error_handlers(app=None):
 
     @app.errorhandler(404)
     def error404(self):
-        return render_template('errors/404.html', title='Page Not Found')
+        return render_template('errors/404.html', current_user=current_user)
 
     @app.errorhandler(500)
     def error500(self):
-        return render_template('errors/500.html', title='Server Error')
+        return render_template('errors/500.html', current_user=current_user)

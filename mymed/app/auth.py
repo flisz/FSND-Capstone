@@ -118,7 +118,7 @@ def verify_decode_jwt(token):
             'description': 'Authorization malformed, Error decoding token headers.'
         }, 401)
 
-    rsa_key = {}
+    rsa_key = ''
     # it should be an Auth0 token with key id (kid)
     if 'kid' not in unverified_header:
         raise AuthError({
