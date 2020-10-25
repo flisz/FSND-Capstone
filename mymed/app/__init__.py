@@ -51,8 +51,6 @@ def create_app(config_yaml=None):
     # register views
     init_views(app)
 
-
-
     return app
 
 
