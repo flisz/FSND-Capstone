@@ -3,6 +3,7 @@ from mymed.db import db
 
 __all__ = ('Item',)
 
+
 class Item(Model):
     """
     Base Model Provides:
