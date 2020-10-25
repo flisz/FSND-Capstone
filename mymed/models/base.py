@@ -32,7 +32,7 @@ __all__ = ('Model',)
 class Model(db.Model, QueryMixin):
     """Abstract base class for all app models.
 
-    Provides a `pk` & `created_at` column to every model.
+    Provides an `id` & `created_at` column to every model.
 
     To define models, follow this example:
 
@@ -43,7 +43,7 @@ class Model(db.Model, QueryMixin):
     """
     __abstract__ = True
 
-    pk = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
 
     @declared_attr
     def created_at(cls):
@@ -78,7 +78,7 @@ class Model(db.Model, QueryMixin):
 
         Can be overridden by subclasses to customize string representation.
         """
-        return u"{}.{}".format(self.class_name, self.pk)
+        return u"{}.{}".format(self.class_name, self.id)
 
     @declared_attr
     def __tablename__(cls):

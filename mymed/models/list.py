@@ -9,7 +9,7 @@ __all__ = ('List',)
 class List(Model):
     """
     Base Model Provides:
-        pk (primary key)
+        id (primary key)
         created_at (creation date)
     """
     name = db.Column(db.String(), nullable=False)
@@ -21,8 +21,8 @@ class List(Model):
     @property
     def dictionary(self):
         return {
-            'pk': self.pk,
+            'id': self.id,
             'created_at': self.created_at,
             'name': self.name,
-            'items': [item.dictionary for item in Item.query.filter(Item.list_id == self.pk)]
+            'items': [item.dictionary for item in Item.query.filter(Item.list_id == self.id)]
         }

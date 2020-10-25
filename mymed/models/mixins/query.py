@@ -137,26 +137,26 @@ class QueryMixin(object):
             return item
 
     @classmethod
-    def get(cls, pk):
+    def get(cls, id):
         """Get item by primary key.
 
         Returns instance or `None`.
         """
-        return cls.query.get(pk)
+        return cls.query.get(id)
 
     @classmethod
-    def get_active_or_404(cls, pk):
+    def get_active_or_404(cls, id):
         """Get item by primary key or 404 only if it is active."""
-        item = cls.query.get_or_404(pk)
+        item = cls.query.get_or_404(id)
         if item.active:
             return item
         else:
             return abort(404)
 
     @classmethod
-    def get_or_404(cls, pk):
+    def get_or_404(cls, id):
         """Get item by primary key or 404."""
-        return cls.query.get_or_404(pk)
+        return cls.query.get_or_404(id)
 
     ########################################
     # Internal methods; Do not use directly
