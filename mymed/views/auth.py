@@ -16,11 +16,9 @@ class AuthView(BaseView):
             flash('I redirected over here')
             return redirect(url_for('RootView:index'))
 
-
     def logout(self):
         logout_user()
         return redirect(url_for('RootView:index'))
-
 
     def callback(self):
         if not current_user.is_anonymous:

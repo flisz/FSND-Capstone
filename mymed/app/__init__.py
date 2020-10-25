@@ -41,7 +41,7 @@ def create_app(config_yaml=None):
     app.config['SECRET_KEY'] = deepcopy(setup.SECRET_KEY)
 
     set_app_mode(app)
-
+    lm.init_app(app)
     # setup csrf
     csrf.init_app(app)
 
