@@ -11,10 +11,12 @@ class Context(Model):
         id (primary key)
         created_at (creation date)
     """
+    created_by = db.Column(db.Integer, db.ForeignKey('creator.id'), nullable=False)
+    patron_id = db.Column(db.Integer, db.ForeignKey('patron.id'), nullable=False)
     measurement_id = db.relationship('Measurement', backref='measurements', lazy=True)
+    address_id = db.Column(db.Integer, db.ForeignKey('appointments.id'), nullable=True)
     appointment_id = db.Column(db.Integer, db.ForeignKey('appointments.id'), nullable=True)
     provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'), nullable=True)
-    patron_id = db.Column(db.Integer, db.ForeignKey('patron.id'), nullable=False)
 
     def __repr__(self):
         return f'<Context {self.id} measurement: {self.context_id} value: {self.value} units: {self.units}>'
@@ -25,6 +27,10 @@ class Context(Model):
             .order_by(Measurement.created_at)
 
     @property
+    def measurements_serialized(self):
+        return [measurement.dictionary for measurement in self.measurements]
+
+    @property
     def number_of_measurements(self):
         return self.measurements.count()
 
@@ -33,10 +39,10 @@ class Context(Model):
         return {
             'id': self.id,
             'created_at': self.created_at,
-            'measurements': self.description,
-            'appointment': self.value,
+            'creator': self.creator.dictionary,
+            'patron': self.patron.dicrionary,
             'provider': self.units,
-            'valid': self.valid,
-            'context_id': self.context_id,
-            'patron_id': self.patron_id
+            'measurement_count': self.number_of_measurements,
+            'measurements': self.measurements_serialized,
+            'appointment': self.value,
         }

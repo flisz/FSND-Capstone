@@ -16,7 +16,6 @@ class Measurement(Model):
     units = db.Column(db.String(), nullable=False)
     valid = db.Column(db.Boolean, nullable=False, default=True)
     context_id = db.Column(db.Integer, db.ForeignKey('context.id'), nullable=False)
-    patron_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
         return f'<Measurement {self.id} with context: {self.context_id} value: {self.value} units: {self.units}>'

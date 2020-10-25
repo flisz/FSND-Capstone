@@ -15,27 +15,34 @@ class User(UserMixin, Model):
 
     """
 
-    alternate_id = db.Column(db.Integer, nullable=False)
+    alternate_id = db.Column(db.Integer, nullable=False, unique=True)
     social_id = db.Column(db.String(64), nullable=False, unique=True)
     nickname = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(64), nullable=True)
-    address = db.relationship('Address', backref='address', lazy=True, nullable=True)
     role = db.Column(db.String(64), nullable=True)
     permissions = db.Column(db.String(64), nullable=True)
+    context = db.relationship('Context', backref='context', lazy=True)
 
     def __repr__(self):
-        return f'<Measurement {self.id} with context: {self.context_id} value: {self.value} units: {self.units}>'
+        return f'<User {self.id}: email: {self.email} nickname: {self.nickname}>'
 
     @property
     def dictionary(self):
         return {
             'id': self.id,
             'created_at': self.created_at,
-            'name': self.name,
-            'description': self.description,
-            'value': self.value,
-            'units': self.units,
-            'valid': self.valid,
-            'context_id': self.context_id,
-            'patron_id': self.patron_id
+            'alternate_id': self.alternate_id,
+            'social_id': self.social_id,
+            'email': self.email,
+            'role': self.role,
+            'permissions': self.permissions,
+            'contexts': self.all_contexts_serialized
         }
+
+    @property
+    def all_contexts(self):
+        return []
+
+    @property
+    def all_contexts_serialized(self):
+        return []
