@@ -76,8 +76,8 @@ Application environment variables are set using the `/config.yaml` file.
 4) Create application and testing databases: 
 
 ```bash
-initdb db_mymed
-initdb db_mymed_testing
+createdb db_mymed
+createdb db_mymed_testing
 ```
 
 ## Testing deployment: 
@@ -90,14 +90,14 @@ To run the server, execute:
 
 In Linux:
 ```bash
-export FLASK_APP=flaskr
+export FLASK_APP=mymed
 export FLASK_ENV=development
 flask run
 ```
 
 In Windows: 
 ```bash
-set FLASK_APP=flaskr
+set FLASK_APP=mymed
 set FLASK_ENV=development
 flask run
 ```

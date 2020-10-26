@@ -27,8 +27,6 @@ query = db.session.query
 migrate = Migrate()
 
 
-
-
 def init_db(app=None, db=None):
     """
     Initializes the global database object used by the app.
@@ -56,31 +54,32 @@ def make_db_uri(app):
     Creates a uri for the database
     """
     setup = app.config.get('SETUP')
-    data = setup.DATABASE_INFO
+    db_info = setup.DATABASE_INFO.get('database')
+    config = setup.CONFIG
 
-    DEFAULT_DATABASE_NAME = f'db_{data.get("project_name")}'
+    DEFAULT_DATABASE_NAME = f'db_{config.get("project_name")}'
 
     # Collect username:
-    username = data.get('username')
+    username = db_info.get('username')
 
     # Collect password:
-    password = data.get('password')
+    password = db_info.get('password')
     skip_passwords = ['none', 'None', 'default']
     if any([password == skip for skip in skip_passwords]):
         password = None
 
     # Collect host:
-    host = data.get('host', 'localhost')
+    host = db_info.get('host', 'localhost')
     if host == 'default':
         host = 'localhost'
 
     # Collect port
-    port = data.get('port', '5432')
+    port = db_info.get('port', '5432')
     if port == 'default':
         port = '5432'
 
     # Collect database_name
-    database_name = data.get('database_name', DEFAULT_DATABASE_NAME)
+    database_name = db_info.get('database_name', DEFAULT_DATABASE_NAME)
     if database_name == 'default':
         database_name = DEFAULT_DATABASE_NAME
 

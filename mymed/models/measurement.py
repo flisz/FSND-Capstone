@@ -15,10 +15,10 @@ class Measurement(Model):
     value = db.Column(db.String(), nullable=False)
     units = db.Column(db.String(), nullable=False)
     valid = db.Column(db.Boolean, nullable=False, default=True)
-    context_id = db.Column(db.Integer, db.ForeignKey('context.id'), nullable=False)
+    record_id = db.Column(db.Integer, db.ForeignKey('record.id'), nullable=False)
 
     def __repr__(self):
-        return f'<Measurement {self.id} with context: {self.context_id} value: {self.value} units: {self.units}>'
+        return f'<Measurement {self.id} with record_id: {self.record_id} value: {self.value} units: {self.units}>'
 
     @property
     def dictionary(self):
@@ -30,6 +30,5 @@ class Measurement(Model):
             'value': self.value,
             'units': self.units,
             'valid': self.valid,
-            'context_id': self.context_id,
-            'patron_id': self.patron_id
+            'record_id': self.record.id,
         }

@@ -2,28 +2,29 @@ from .base import Model
 from .measurement import Measurement
 from mymed.db import db
 
-__all__ = ('Context',)
+__all__ = ('Record',)
 
 
-class Context(Model):
+class Record(Model):
     """
     Base Model Provides:
         id (primary key)
         created_at (creation date)
     """
-    created_by = db.Column(db.Integer, db.ForeignKey('creator.id'), nullable=False)
     patron_id = db.Column(db.Integer, db.ForeignKey('patron.id'), nullable=False)
-    measurement_id = db.relationship('Measurement', backref='measurements', lazy=True)
-    address_id = db.Column(db.Integer, db.ForeignKey('appointments.id'), nullable=True)
-    appointment_id = db.Column(db.Integer, db.ForeignKey('appointments.id'), nullable=True)
-    provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'), nullable=True)
+    measurements = db.relationship('Measurement', backref='measurements', lazy=True)
+    appointment_id = db.Column(db.Integer, db.ForeignKey('appointment.id'))
+    provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
 
     def __repr__(self):
-        return f'<Context {self.id} measurement: {self.context_id} value: {self.value} units: {self.units}>'
+        return f'<Record {self.id} ' \
+               f'patron_id: {self.patron_id} ' \
+               f'provider_id: {self.provider_id} ' \
+               f'appointment_id: {self.appointment_id}>'
 
     @property
     def measurements(self):
-        return Measurement.query.filter(Measurement.context_id == self.id) \
+        return Measurement.query.filter(Measurement.record_id == self.id) \
             .order_by(Measurement.created_at)
 
     @property
@@ -39,10 +40,9 @@ class Context(Model):
         return {
             'id': self.id,
             'created_at': self.created_at,
-            'creator': self.creator.dictionary,
             'patron': self.patron.dicrionary,
-            'provider': self.units,
+            'provider': self.provider.dictionary,
             'measurement_count': self.number_of_measurements,
             'measurements': self.measurements_serialized,
-            'appointment': self.value,
+            'appointment': self.appointment,
         }
