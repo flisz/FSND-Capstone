@@ -1,7 +1,7 @@
 import pytest
 
 
-def tdd_api_get_measurement(client):
+def tdd_api_get_user_profile(client):
     """
     GIVEN: an initialized app client
     WHEN: the /health/ route is requested
