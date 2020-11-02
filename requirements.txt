@@ -11,5 +11,6 @@ flask-login
 flask-sqlalchemy
 flask-migrate
 flask-classful
+requests
 SQLALchemy
 SQLAlchemy-utils

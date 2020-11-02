@@ -16,8 +16,8 @@ class Appointment(Model):
         id (primary key)
         created_at (creation date)
     """
-    name = db.Column(db.String(), nullable=False)
-    records = db.relationship('Records', backref='appointment', lazy=True)
+    name = db.Column(db.String(256), nullable=False)
+    records = db.relationship('Record', backref='appointment', lazy=True)
     confirmed = db.Column(db.Boolean, default=False, nullable=False)
     held = db.Column(db.Boolean, default=False, nullable=False)
     cancelled = db.Column(db.Boolean, default=False, nullable=False)

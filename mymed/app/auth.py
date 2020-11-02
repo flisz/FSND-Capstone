@@ -4,6 +4,10 @@ from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
 
+from mymed.setup.loggers import LOGGERS
+
+log = LOGGERS.Auth
+
 
 AUTH0_DOMAIN = 'flis.us.auth0.com'
 ALGORITHMS = ['RS256']
@@ -20,6 +24,13 @@ class AuthError(Exception):
         self.status_code = status_code
 
 
+def get_cookie_session_token():
+    try:
+        return request.cookies.get('session')
+    except Exception as e:
+        log.exception(e)
+
+
 def get_token_auth_header():
     """
     Obtains the Access Token from the Authorization Header
@@ -31,6 +42,7 @@ def get_token_auth_header():
 
     # it should attempt to get the header from the request
     auth = request.headers.get('Authorization', None)
+    log.debug(f'get_token_auth_header, got: {auth}')
     #   -> raise an AuthError if no header is present
     if not auth:
         raise AuthError({
@@ -108,11 +120,12 @@ def verify_decode_jwt(token):
     """
 
     # it should verify the token using Auth0 /.well-known/jwks.json
+    log.debug(f'token: {token}')
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
     try:
         unverified_header = jwt.get_unverified_header(token)
-    except JWTError as e:
+    except jwt.JWTError as e:
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Authorization malformed, Error decoding token headers.'
@@ -120,6 +133,7 @@ def verify_decode_jwt(token):
 
     rsa_key = ''
     # it should be an Auth0 token with key id (kid)
+    log.debug(json.dumps(unverified_header, indent=4))
     if 'kid' not in unverified_header:
         raise AuthError({
             'code': 'invalid_header',
@@ -148,6 +162,7 @@ def verify_decode_jwt(token):
                 issuer='https://' + AUTH0_DOMAIN + '/'
             )
             # return the decoded payload
+            log.debug(json.dumps(payload, indent=4))
             return payload
         except jwt.ExpiredSignatureError:
             raise AuthError({
@@ -181,6 +196,7 @@ def requires_sign_in(f):
         try:
             token = get_token_auth_header()
             payload = verify_decode_jwt(token)
+            payload['token'] = token
         except AuthError as e:
             abort(make_response(jsonify(e.error), e.status_code))
         return f(payload, *args, **kwargs)
@@ -202,10 +218,56 @@ def requires_auth(permission=''):
                 # it should use the verify_decode_jwt method to decode the jwt
                 payload = verify_decode_jwt(token)
                 # it should use the check_permissions method validate claims and check the requested permission
+                payload['token'] = token
                 check_permissions(permission, payload)
             except AuthError as e:
                 abort(make_response(jsonify(e.error), e.status_code))
             return f(payload, *args, **kwargs)
+        return wrapper
+    # return the decorator which passes the decoded payload to the decorated method
+    return requires_auth_decorator
+
+
+def view_requires_sign_in(f):
+    """
+    Decorator to require Authorization for a given route without any specific permissions
+    :param f: function to wrap
+    :return: function with wrapper
+    """
+    @wraps(f)
+    def wrapper(self, *args, **kwargs):
+        try:
+            token = get_token_auth_header()
+            payload = verify_decode_jwt(token)
+            payload['token'] = token
+        except AuthError as e:
+            abort(make_response(jsonify(e.error), e.status_code))
+        # self is a FlaskView object
+        return f(self, payload, *args, **kwargs)
+    return wrapper
+
+
+def view_requires_auth(permission=''):
+    """
+    Decorator to require Authorization and specific permissions for a given route
+    :param permission: permissions required for wrapped route
+    :return: double wrapped route return
+    """
+    def requires_auth_decorator(f):
+        @wraps(f)
+        def wrapper(self, *args, **kwargs):
+            try:
+                # it should use the get_token_auth_header method to get the token
+                token = get_token_auth_header()
+                # it should use the verify_decode_jwt method to decode the jwt
+                payload = verify_decode_jwt(token)
+                # it should use the check_permissions method validate claims and check the requested permission
+                payload['token'] = token
+                check_permissions(permission, payload)
+            except AuthError as e:
+                abort(make_response(jsonify(e.error), e.status_code))
+            # self is a FlaskView object
+            return f(self, payload, *args, **kwargs)
         return wrapper
     # return the decorator which passes the decoded payload to the decorated method
     return requires_auth_decorator

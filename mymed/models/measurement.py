@@ -10,10 +10,10 @@ class Measurement(Model):
         id (primary key)
         created_at (creation date)
     """
-    name = db.Column(db.String(), nullable=False)
-    description = db.Column(db.String(), nullable=True)
-    value = db.Column(db.String(), nullable=False)
-    units = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(256), nullable=False)
+    description = db.Column(db.String(2000), nullable=True)
+    value = db.Column(db.String(256), nullable=False)
+    units = db.Column(db.String(256), nullable=False)
     valid = db.Column(db.Boolean, nullable=False, default=True)
     record_id = db.Column(db.Integer, db.ForeignKey('record.id'), nullable=False)
 

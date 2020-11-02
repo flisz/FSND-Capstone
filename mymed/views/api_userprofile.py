@@ -1,10 +1,16 @@
 from .mixins.base import BaseView
+from mymed.app.auth import requires_sign_in
+
+__all__ = ('ApiUserProfileView',)
 
 
-__all__ = ('ApiView',)
+class ApiUserProfileView(BaseView):
+    route_base = '/api/userprofile'
+    decorators = [requires_sign_in]
 
+    def index(self):
+        return "Healthy"
 
-class ApiView(BaseView):
     @classmethod
     def __ignore__(cls):
         return True

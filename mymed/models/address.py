@@ -7,7 +7,7 @@ __all__ = ('Address',)
 
 association_table = db.Table('user_address_association', Model.metadata,
                              db.Column('address_id', db.Integer, db.ForeignKey('address.id')),
-                             db.Column('user_id', db.Integer, db.ForeignKey('address.id')),
+                             db.Column('userprofile_id', db.Integer, db.ForeignKey('userprofile.id')),
                              )
 
 
@@ -22,7 +22,7 @@ class Address(Model):
     city = db.Column(db.String(), nullable=False)
     state = db.Column(db.String(), nullable=False)
     zip_code = db.Column(db.String(), nullable=False)
-    users = db.relationship("User", secondary=association_table, backref="addresses")
+    user_profiles = db.relationship("UserProfile", secondary=association_table, backref="addresses")
     appointments = db.relationship("Appointment", backref="address")
 
     def __repr__(self):
@@ -38,13 +38,13 @@ class Address(Model):
             'city' : self.city,
             'state': self.state,
             'zip_code': self.zip_code,
-            'users': self.all_users
+            'user_profiles': self.all_users
             #'appointments': self.all_appointments todo upcoming and past appointments
         }
 
     @property
     def all_users_serialized(self):
         data = list()
-        for user in self.users:
+        for user in self.user_profiles:
             data.append(user.nickname)
         return data

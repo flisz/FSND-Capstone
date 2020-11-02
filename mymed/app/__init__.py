@@ -6,6 +6,7 @@ https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
 
 from copy import deepcopy
 from flask import Flask
+from flask_cors import CORS
 
 from mymed.setup import SetupConfig
 from mymed.setup.loggers import LOGGERS
@@ -37,6 +38,7 @@ def create_app(config_yaml=None):
 
     # start app setup
     app = Flask(__name__, template_folder=setup.TEMPLATES, static_folder=setup.STATIC_FILES)
+    CORS(app)
     app.config['SETUP'] = deepcopy(setup)
     app.config['SECRET_KEY'] = deepcopy(setup.SECRET_KEY)
 

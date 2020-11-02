@@ -18,6 +18,14 @@ loggers:
     level: DEBUG
     handlers: [console]
     propagate: no
+  Auth:
+    level: DEBUG
+    handlers: [ console ]
+    propagate: no
+  Login:
+    level: DEBUG
+    handlers: [ console ]
+    propagate: no
   Database:
     level: INFO
     handlers: [console]

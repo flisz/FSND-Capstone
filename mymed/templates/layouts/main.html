@@ -56,8 +56,9 @@
           <li class="nav-item">
             <a class="nav-link" href="#">User: {{ current_user.nickname }}</a>
           </li>
+          <li class="nav-item">   </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+            <a class="nav-link" href="{{ url_for('AuthView:logout') }}">Logout</a>
           </li>
         </ul>
       {% else %}
@@ -113,6 +114,10 @@
         }
     });
   </script>
-
+  {% if current_user.is_active and current_user.is_authenticated %}
+  <script>
+    localStorage.setItem('token', {{ current_user.token }})
+  </script>
+  {% endif %}
 </body>
 </html>

@@ -24,13 +24,18 @@ class LoggerProperties(type):
     def all(cls):
         return [cls.Setup,
                 cls.WebApp,
-                cls.Database]
+                cls.Database,
+                cls.Auth,
+                cls.Login,
+                ]
 
 
 class LOGGERS(LoggerMetaProperty, metaclass=LoggerProperties):
     Setup = logging.getLogger('Setup')
     WebApp = logging.getLogger('WebApp')
     Database = logging.getLogger('Database')
+    Auth = logging.getLogger('Auth')
+    Login = logging.getLogger('Login')
 
 
 init_loggers()
