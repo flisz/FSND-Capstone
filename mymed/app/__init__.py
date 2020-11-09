@@ -58,22 +58,20 @@ def create_app(config_yaml=None):
 
 def set_app_mode(app):
     # set some helpful attrs to greatly simplify state checks
-    cfg = app.config
-    app.env = cfg.get('ENVIRONMENT', 'development')
-    if app.debug:
+    setup = app.config['SETUP']
+    app.env = setup.APP_MODE
+    if app.env == 'test':
+        app.testing = True
+        app.debug = True
         app.live = False
-        if app.env == 'test':
-            app.testing = True
-        elif app.env == 'development':
+    elif app.debug:
+        app.live = False
+        if app.env == 'development':
             app.dev = True
-        else:
-            raise EnvironmentError('Invalid environment for app state.')
+    elif app.env == 'development':  # but debug is off
+        app.live = False
+        app.testing = False
+    elif app.env == 'production':
+        app.live = True
     else:
-        if app.env == 'production':
-            app.live = True
-        elif app.env == 'development':
-            # dev.proj runs in development with debug off
-            app.live = False
-            app.testing = False
-        else:
-            raise EnvironmentError('Invalid environment for app state.')
+        raise EnvironmentError('Invalid environment for app state.')

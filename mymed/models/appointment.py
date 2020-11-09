@@ -10,6 +10,12 @@ from mymed.db import db
 __all__ = ('Appointment',)
 
 
+provider_appointment_association_table = db.Table('provider_appointment_association', Model.metadata,
+                                                  db.Column('provider_id', db.Integer, db.ForeignKey('provider.id')),
+                                                  db.Column('appointment_id', db.Integer, db.ForeignKey('appointment.id')),
+                                                  )
+
+
 class Appointment(Model):
     """
     .base.Model provides:
@@ -23,6 +29,7 @@ class Appointment(Model):
     cancelled = db.Column(db.Boolean, default=False, nullable=False)
     scheduler_id = db.Column(db.Integer, db.ForeignKey('scheduler.id'), nullable=False)
     address_id = db.Column(db.Integer, db.ForeignKey('address.id'))
+    providers = db.relationship("Provider", secondary=provider_appointment_association_table, backref="appointments")
 
     @declared_attr
     def start_time(self):

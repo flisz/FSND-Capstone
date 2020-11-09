@@ -83,7 +83,7 @@ def make_db_uri(app):
     if database_name == 'default':
         database_name = DEFAULT_DATABASE_NAME
 
-    if setup.MODE == 'testing':
+    if setup.APP_MODE == 'test':
         database_name = f'{database_name}_testing'
 
     if password:

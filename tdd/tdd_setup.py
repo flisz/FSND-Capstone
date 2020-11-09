@@ -34,15 +34,92 @@ def tdd_setup_CONFIG_is_dictionary(setup):
 
 def tdd_setup_MODE_is_valid(setup):
     """
-    GIVEN: and setup tdd_fixture
+    GIVEN: a setup tdd_fixture
     WHEN: MODE is requested
-    THEN: MODE is a valid value
+    THEN: MODE is 'test'
     """
-    valid_value_list = ['production', 'development', 'testing']
-    assert any([setup.MODE == valid for valid in valid_value_list])
-    warn_value_list = ['development']
-    if any([setup.MODE == warn for warn in warn_value_list]):
-        warnings.warn(UserWarning("mode is {} which should not be in production".format(setup.MODE)))
+    assert setup.APP_MODE == 'test'
+
+
+def tdd_setup_APP_DOMAIN_is_valid(setup):
+    """
+    GIVEN: a setup fixture
+    WHEN: setup.APP_DOMAIN is accessed
+    THEN: a string with 'http' is returned
+    """
+    assert 'http' in setup.APP_DOMAIN
+
+
+def tdd_setup_APP_HOST_is_valid(setup):
+    """
+    GIVEN: a setup fixture
+    WHEN: setup.APP_HOST is accessed
+    THEN: a string is returned
+    """
+    assert isinstance(setup.APP_HOST, str)
+
+
+def tdd_setup_APP_PORT_is_valid(setup):
+    """
+    GIVEN: a setup fixture
+    WHEN: setup.APP_PORT is accessed
+    THEN: a string representation of an int is returned
+    AND: the int is >4000 and <10000
+    """
+    assert isinstance(setup.APP_PORT, int)
+    assert 4000 < setup.APP_PORT
+    assert setup.APP_PORT < 10000
+
+
+def tdd_setup_AUTH0_DOMAIN_is_str(setup):
+    """
+    GIVEN: a setup tdd_fixture
+    WHEN: AUTH0_DOMAIN attribute is requested
+    THEN: a string with 'auth0.com' is returned
+    """
+    assert isinstance(setup.AUTH0_DOMAIN, str)
+    assert 'auth0.com' in setup.AUTH0_DOMAIN
+
+
+def tdd_setup_AUTH0_ALGORITHMS_is_valid(setup):
+    """
+    GIVEN: a setup fixture
+    WHEN: AUTH0_ALGORITHMS is requested
+    THEN: a list of strings with 'RS256' is returned
+    """
+    assert isinstance(setup.AUTH0_ALGORITHMS, list)
+    assert len(setup.AUTH0_ALGORITHMS) == 1
+    assert setup.AUTH0_ALGORITHMS[0] == 'HS256'
+
+
+def tdd_setup_AUTH0_API_AUDIENCE_is_str(setup):
+    """
+    GIVEN: a setup fixture
+    WHEN: setup.AUTH0_API_AUDIENCE is requested
+    THEN: a string is returned
+    """
+    assert isinstance(setup.AUTH0_API_AUDIENCE, str)
+
+
+def tdd_setup_AUTH0_CLIENT_ID_is_str(setup):
+    """
+    GIVEN: a setup fixture
+    WHEN: setup.AUTH0_CLIENT_ID is requested
+    THEN: a string is returned
+    """
+    assert isinstance(setup.AUTH0_CLIENT_ID, str)
+
+
+def tdd_setup_AUTH0_CALLBACK_URL_is_valid(setup):
+    """
+    GIVEN: a setup fixture
+    WHEN: setup.AUTH0_CALLBACK_URL is requested
+    THEN: a string containing auth/callback is returned
+    """
+    assert isinstance(setup.AUTH0_CALLBACK_URL, str)
+    assert 'auth/callback/' in setup.AUTH0_CALLBACK_URL
+    assert setup.APP_DOMAIN in setup.AUTH0_CALLBACK_URL
+    assert str(setup.APP_PORT) in setup.AUTH0_CALLBACK_URL
 
 
 def tdd_setup_USER_HOME_isdir(setup):
@@ -85,6 +162,15 @@ def tdd_setup_ROOT_is_valid(setup):
     assert any([item == 'tdd' for item in directory_contents])
     assert any([item == 'migrations' for item in directory_contents])
     assert any([item == setup.PROJECT_NAME for item in directory_contents])
+
+
+def tdd_setup_JWT_SECRET_is_valid(setup):
+    """
+    GIVEN: an setup tdd_fixture
+    WHEN: setup.JWT_SECRET is accessed
+    THEN: a string is returned
+    """
+    assert isinstance(setup.JWT_SECRET, str)
 
 
 def tdd_setup_HOSTNAME_is_str(setup):

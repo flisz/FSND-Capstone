@@ -17,6 +17,12 @@ class UserProfile(UserMixin, Model):
         created_at (creation date)
     flask_login.UserMixin provides:
 
+    .address.Address.Model provides:
+        addresses (collection)
+
+    .record.Record.Model provides:
+        records (collection)
+
     """
 
     alternate_id = db.Column(db.String(256), nullable=False, unique=True)
@@ -30,21 +36,13 @@ class UserProfile(UserMixin, Model):
     locale = db.Column(db.String(16), default='en', nullable=False)
     updated_at = db.Column(ArrowType, default=utcnow, index=True)
     email_verified = db.Column(db.Boolean, nullable=True, default=True)
-    patron = db.relationship('Patron', uselist=False, back_populates="userprofile")
-    provider = db.relationship('Provider', uselist=False, back_populates="userprofile")
-    scheduler = db.relationship('Scheduler', uselist=False, back_populates="userprofile")
-    manager = db.relationship('Manager', uselist=False, back_populates="userprofile")
+    patron = db.relationship('Patron', uselist=False, back_populates="userprofile")  # 1-to-1
+    provider = db.relationship('Provider', uselist=False, back_populates="userprofile")  # 1-to-1
+    scheduler = db.relationship('Scheduler', uselist=False, back_populates="userprofile")  # 1-to-1
+    manager = db.relationship('Manager', uselist=False, back_populates="userprofile")  # 1-to-1
 
     def __repr__(self):
         return f'<User {self.id}: email: {self.email} nickname: {self.nickname}>'
-
-    @property
-    def token(self):
-        return self._token
-
-    @token.setter
-    def token(self, value):
-        self._token = value
 
     @property
     def dictionary(self):
@@ -135,6 +133,8 @@ class Provider(Model):
     .base.Model provides:
         id (primary key)
         created_at (creation date)
+    .appointment.Appointment.Model provides
+        appointments (through secondary table)
     """
     records = db.relationship('Record', backref='provider', lazy=True)
     userprofile_id = db.Column(db.Integer, db.ForeignKey('userprofile.id'))
@@ -148,6 +148,8 @@ class Scheduler(Model):
     .base.Model provides:
         id (primary key)
         created_at (creation date)
+    .address.Address.Model provides:
+        addresses (collection through secondary table)
     """
     userprofile_id = db.Column(db.Integer, db.ForeignKey('userprofile.id'))
     userprofile = db.relationship("UserProfile", back_populates='scheduler')
@@ -161,6 +163,8 @@ class Manager(Model):
     .base.Model provides:
         id (primary key)
         created_at (creation date)
+    .address.Address.Model provides:
+        addresses (collection through secondary table)
     """
     userprofile_id = db.Column(db.Integer, db.ForeignKey('userprofile.id'))
     userprofile = db.relationship("UserProfile", back_populates='manager')

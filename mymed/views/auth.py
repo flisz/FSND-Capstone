@@ -4,7 +4,7 @@ import json
 from .mixins.base import BaseView
 
 from flask_login import login_user, logout_user, current_user, login_required
-from flask import redirect, url_for, flash, session, request, render_template, jsonify
+from flask import redirect, url_for, flash, session, request, render_template, jsonify, current_app
 
 from mymed.setup.loggers import LOGGERS
 from mymed.app.login import verify_user
@@ -15,21 +15,19 @@ __all__ = ('AuthView',)
 log = LOGGERS.Auth
 
 
-AUTH0_DOMAIN = 'flis.us.auth0.com'
-ALGORITHMS = ['RS256']
-API_AUDIENCE = 'coffee'
-CLIENT_ID = 'I12UnrxbhRGHcQG9wCyJwARE3YN81WLz'  # the client id generated for the auth0 app
-CALLBACK_URL = 'http://127.0.0.1:5000/auth/callback/'  # the url of the callback service
-
-
 class AuthView(BaseView):
     def login(self):
         if current_user.is_anonymous:
-            link = f'https://{AUTH0_DOMAIN}/authorize' \
-                   f'?audience={API_AUDIENCE}' \
+            auth0_domain = current_app.config['SETUP'].AUTH0_DOMAIN
+            api_audience = current_app.config['SETUP'].AUTH0_API_AUDIENCE
+            client_id = current_app.config['SETUP'].AUTH0_CLIENT_ID
+            callback_url = current_app.config['SETUP'].AUTH0_CALLBACK_URL
+
+            link = f'https://{auth0_domain}/authorize' \
+                   f'?audience={api_audience}' \
                    f'&response_type=token' \
-                   f'&client_id={CLIENT_ID}' \
-                   f'&redirect_uri={CALLBACK_URL}'
+                   f'&client_id={client_id}' \
+                   f'&redirect_uri={callback_url}'
             return redirect(link)
         else:
             flash('I redirected over here')

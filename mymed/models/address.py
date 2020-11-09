@@ -5,10 +5,20 @@ from mymed.db import db
 __all__ = ('Address',)
 
 
-association_table = db.Table('user_address_association', Model.metadata,
-                             db.Column('address_id', db.Integer, db.ForeignKey('address.id')),
-                             db.Column('userprofile_id', db.Integer, db.ForeignKey('userprofile.id')),
-                             )
+user_address_association_table = db.Table('user_address_association', Model.metadata,
+                                          db.Column('address_id', db.Integer, db.ForeignKey('address.id')),
+                                          db.Column('userprofile_id', db.Integer, db.ForeignKey('userprofile.id')),
+                                          )
+
+scheduler_address_association_table = db.Table('scheduler_address_association', Model.metadata,
+                                               db.Column('address_id', db.Integer, db.ForeignKey('address.id')),
+                                               db.Column('scheduler_id', db.Integer, db.ForeignKey('scheduler.id')),
+                                               )
+
+manager_address_association_table = db.Table('manager_address_association', Model.metadata,
+                                             db.Column('address_id', db.Integer, db.ForeignKey('address.id')),
+                                             db.Column('manager_id', db.Integer, db.ForeignKey('manager.id')),
+                                             )
 
 
 class Address(Model):
@@ -17,12 +27,15 @@ class Address(Model):
         id (primary key)
         created_at (creation date)
     """
+    nickname = db.Column(db.String(), nullable=False)
     line1 = db.Column(db.String(), nullable=False)
     line2 = db.Column(db.String(), nullable=True)
     city = db.Column(db.String(), nullable=False)
     state = db.Column(db.String(), nullable=False)
     zip_code = db.Column(db.String(), nullable=False)
-    user_profiles = db.relationship("UserProfile", secondary=association_table, backref="addresses")
+    user_profiles = db.relationship("UserProfile", secondary=user_address_association_table, backref="addresses")
+    schedulers = db.relationship("Scheduler", secondary=scheduler_address_association_table, backref="addresses")
+    managers = db.relationship("Manager", secondary=manager_address_association_table, backref="addresses")
     appointments = db.relationship("Appointment", backref="address")
 
     def __repr__(self):
@@ -48,3 +61,5 @@ class Address(Model):
         for user in self.user_profiles:
             data.append(user.nickname)
         return data
+
+

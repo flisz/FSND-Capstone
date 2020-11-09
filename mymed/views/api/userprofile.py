@@ -1,4 +1,4 @@
-from .mixins.base import BaseView
+from mymed.views.mixins.base import BaseView
 from mymed.app.auth import requires_sign_in
 
 __all__ = ('ApiUserProfileView',)
@@ -13,7 +13,7 @@ class ApiUserProfileView(BaseView):
 
     @classmethod
     def __ignore__(cls):
-        return True
+        return False
 
 """
 # routes

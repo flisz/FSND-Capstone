@@ -17,7 +17,16 @@ class SetupConfig:
         self.__properties['CONFIG'] = self.__init_config(config_yaml=config_yaml)
         self.__properties['DATABASE_INFO'] = self.__init_db_info()
         self.__properties['PROJECT_NAME'] = self.__init_project_name()
-        self.__properties['MODE'] = self.__init_mode()
+        self.__properties['APP_DOMAIN'] = self.__init_app_domain()
+        self.__properties['APP_HOST'] = self.__init_app_host()
+        self.__properties['APP_PORT'] = self.__init_app_port()
+        self.__properties['AUTH0_DOMAIN'] = self.__init_auth0_domain()
+        self.__properties['AUTH0_ALGORITHMS'] = self.__init_auth0_algorithms()
+        self.__properties['AUTH0_API_AUDIENCE'] = self.__init_auth0_api_audience()
+        self.__properties['AUTH0_CLIENT_ID'] = self.__init_auth0_client_id()
+        self.__properties['AUTH0_CALLBACK_URL'] = self.__init_auth0_callback_url()
+        self.__properties['JWT_SECRET'] = self.__init_jwt_secret()
+        self.__properties['APP_MODE'] = self.__init_mode()
         self.__properties['HOSTNAME'] = self.__init_host_name()
         self.__properties['USER_HOME'] = self.__init_user_home()
         self.__properties['TEMPLATES'] = self.__init_templates()
@@ -83,13 +92,95 @@ class SetupConfig:
             raise ValueError('project_name field missing from config.yaml')
 
     @property
-    def MODE(self):
-        return self.__properties['MODE']
+    def APP_MODE(self):
+        return self.__properties['APP_MODE']
 
     def __init_mode(self):
-        mode = self.CONFIG.get('app', dict()).get('mode', 'development')
-        log.debug(f'MODE: {mode}')
+        mode = self.CONFIG.get('app', dict()).get('mode')
+        log.debug(f'APP_MODE: {mode}')
         return mode
+
+    @property
+    def APP_DOMAIN(self):
+        return self.__properties['APP_DOMAIN']
+
+    def __init_app_domain(self):
+        domain = self.CONFIG.get('app', dict()).get('domain', 'http://127.0.0.1')
+        log.debug(f'APP_DOMAIN: {domain}')
+        return domain
+
+    @property
+    def APP_HOST(self):
+        return self.__properties['APP_HOST']
+
+    def __init_app_host(self):
+        host = self.CONFIG.get('app', dict()).get('host')
+        log.debug(f'APP_HOST: {host}')
+        return host
+
+    @property
+    def APP_PORT(self):
+        return self.__properties['APP_PORT']
+
+    def __init_app_port(self):
+        port = self.CONFIG.get('app', dict()).get('port')
+        log.debug(f'APP_PORT: {port}')
+        return port
+
+    @property
+    def AUTH0_DOMAIN(self):
+        return self.__properties['AUTH0_DOMAIN']
+
+    def __init_auth0_domain(self):
+        domain = self.CONFIG.get('auth0', dict()).get('domain')
+        log.debug(f'AUTH0_DOMAIN: {domain}')
+        return domain
+
+    @property
+    def AUTH0_ALGORITHMS(self):
+        return self.__properties['AUTH0_ALGORITHMS']
+
+    def __init_auth0_algorithms(self):
+        algorithms = audience = self.CONFIG.get('auth0', dict()).get('algorithms', ['RS256'])
+        log.debug(f'AUTH0_ALGORITHMS: {algorithms}')
+        return algorithms
+
+    @property
+    def AUTH0_API_AUDIENCE(self):
+        return self.__properties['AUTH0_API_AUDIENCE']
+
+    def __init_auth0_api_audience(self):
+        audience = self.CONFIG.get('auth0', dict()).get('audience')
+        log.debug(f'AUTH0_API_AUDIENCE: {audience}')
+        return audience
+
+    @property
+    def AUTH0_CLIENT_ID(self):
+        return self.__properties['AUTH0_CLIENT_ID']
+
+    def __init_auth0_client_id(self):
+        client_id = self.CONFIG.get('auth0', dict()).get('client_id')
+        log.debug(f'AUTH0_CLIENT_ID: {client_id}')
+        return client_id
+
+    @property
+    def AUTH0_CALLBACK_URL(self):
+        return self.__properties['AUTH0_CALLBACK_URL']
+
+    def __init_auth0_callback_url(self):
+        callback_url = f'{self.APP_DOMAIN}:' \
+                       f'{self.APP_PORT}/auth/callback/'
+        log.debug(f'AUTH0_CALLBACK_URL: {callback_url}')
+        return callback_url
+
+    @property
+    def JWT_SECRET(self):
+        return self.__properties['JWT_SECRET']
+
+    def __init_jwt_secret(self):
+        jwt_secret = self.CONFIG.get('jwt', dict()).get('secret')
+        log.debug(f'JWT_SECRET: {jwt_secret}')
+        return jwt_secret
 
     @property
     def USER_HOME(self):
