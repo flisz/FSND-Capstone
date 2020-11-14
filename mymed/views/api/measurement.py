@@ -1,11 +1,11 @@
 from mymed.views.mixins.base import BaseView
 from mymed.app.auth import requires_sign_in
 
-__all__ = ('ApiUserProfileView',)
+__all__ = ('ApiMeasurementView',)
 
 
-class ApiUserProfileView(BaseView):
-    route_base = '/api/userprofile'
+class ApiMeasurementView(BaseView):
+    route_base = '/api/measurement'
     decorators = [requires_sign_in]
 
     def index(self):
