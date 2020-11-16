@@ -1,5 +1,6 @@
 from mymed.views.mixins.base import BaseView
 from mymed.app.auth import requires_sign_in
+from mymed.app.login import verify_user
 
 __all__ = ('ApiMeasurementView',)
 
@@ -8,10 +9,12 @@ class ApiMeasurementView(BaseView):
     route_base = '/api/measurement'
     decorators = [requires_sign_in]
 
-    def index(self):
+    def index(self, user=None):
+        user = verify_user(payload)
         return "Healthy"
 
-    def health(self):
+    def health(self, user=None):
+        user = verify_user(payload)
         return "Healthy"
 
     @classmethod

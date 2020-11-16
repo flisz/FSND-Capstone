@@ -1,5 +1,9 @@
+import json
+from flask import jsonify, abort, make_response, request
+from flask_classful import route
 from mymed.views.mixins.base import BaseView
-from mymed.app.auth import requires_sign_in
+from mymed.app.login import verify_user
+from mymed.app.auth import requires_sign_in, AuthError
 
 __all__ = ('ApiUserProfileView',)
 
@@ -8,10 +12,14 @@ class ApiUserProfileView(BaseView):
     route_base = '/api/userprofile'
     decorators = [requires_sign_in]
 
-    def index(self):
-        return "Healthy"
+    def index(self, user=None):
+        return jsonify(user.dictionary)
 
-    def health(self):
+    def patch(self, user=None):
+        data = json.loads(request.data)
+        return jsonify(user.dictionary)
+
+    def health(self, user=None):
         return "Healthy"
 
     @classmethod

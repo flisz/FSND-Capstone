@@ -103,6 +103,7 @@
   <script type="text/javascript" src="{{ url_for('static', filename='js/plugins.js') }}" defer></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}" defer></script>
   <!--[if lt IE 9]><script src="{{ url_for('static', filename='js/libs/respond-1.4.2.min.js') }}"></script><![endif]-->
+  {% if not current_app.testing %}
   <script type="text/javascript">
     var csrf_token = "{{ csrf_token() }}";
     {# The code below will attach a CSRF token to any AJAX request. #}
@@ -114,6 +115,7 @@
         }
     });
   </script>
+  {% endif %}
   {% if current_user.is_active and current_user.is_authenticated %}
   <script>
     localStorage.setItem('token', {{ current_user.token }})

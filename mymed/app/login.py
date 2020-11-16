@@ -38,7 +38,5 @@ def verify_user(payload):
                     setattr(profile, key, value)
     # save changes
     profile.save()
-    log.debug(f'signing in user: {profile.alternate_id}')
     log.debug(json.dumps(profile.dictionary, indent=4))
-    profile.token = token
     return profile

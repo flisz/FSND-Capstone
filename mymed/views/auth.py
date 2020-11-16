@@ -48,13 +48,8 @@ class AuthView(BaseView):
             return redirect(url_for('RootView:index'))
 
     @view_requires_sign_in
-    def finalize(self, payload=None):
+    def finalize(self, user=None):
         log.debug(f'made it to the finalizer!')
-        if not current_user.is_anonymous:
-            log.debug(f'already logged in!')
-        elif payload:
-            flash('I can log you in now!')
-            user = verify_user(payload)
-            login_user(user)
+        flash('Login Successful!')
         return jsonify({'success': True,
                         'redirect_url': url_for('RootView:index')})

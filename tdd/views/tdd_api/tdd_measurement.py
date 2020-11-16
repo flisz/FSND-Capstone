@@ -15,6 +15,7 @@ def tdd_get_api_measurement_logged_out(fresh_anonymous_client):
     response = fresh_anonymous_client.get('/api/measurement')
     assert response.status_code == 308
     assert response.location == 'http://localhost/api/measurement/'
+    #assert response.location == 'http://mymed.dev/api/measurement/'
 
 
 def tdd_get_api_measurement_health_logged_out_redirects_followed(fresh_anonymous_client):

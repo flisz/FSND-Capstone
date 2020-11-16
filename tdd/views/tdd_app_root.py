@@ -25,7 +25,7 @@ def tdd_root_index_anonymous_client(fresh_anonymous_client):
     response = fresh_anonymous_client.get('/')
     assert response.status_code == 200
     assert response.mimetype == 'text/html'
-    assert response.content_length == 3314
+    assert response.content_length == 2898
     assert b'<title>MyMed</title>' in response.data
     assert b'<a class="nav-link" href="/auth/login/">Sign In</a>' in response.data
     assert b'<p class="lead">Helping people become the patrons of their wellness journey</p>' in response.data

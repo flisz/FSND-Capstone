@@ -1,10 +1,12 @@
 import json
 from flask import request, _request_ctx_stack, make_response, jsonify, abort, current_app
+from flask_login import current_user, login_user
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
 
 from mymed.setup.loggers import LOGGERS
+from mymed.app.login import verify_user
 
 log = LOGGERS.Auth
 
@@ -126,7 +128,6 @@ def verify_decode_jwt(token):
                 'code': 'invalid_header',
                 'description': 'Authorization malformed, Error decoding token headers.'
             }, 401)
-
         rsa_key = ''
         # it should be an Auth0 token with key id (kid)
         log.debug(json.dumps(unverified_header, indent=4))
@@ -188,49 +189,6 @@ def verify_decode_jwt(token):
         return payload
 
 
-def requires_sign_in(f):
-    """
-    Decorator to require Authorization for a given route without any specific permissions
-    :param f: function to wrap
-    :return: function with wrapper
-    """
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        try:
-            token = get_token_auth_header()
-            payload = verify_decode_jwt(token)
-            payload['token'] = token
-        except AuthError as e:
-            abort(make_response(jsonify(e.error), e.status_code))
-        return f(payload, *args, **kwargs)
-    return wrapper
-
-
-def requires_auth(permission=''):
-    """
-    Decorator to require Authorization and specific permissions for a given route
-    :param permission: permissions required for wrapped route
-    :return: double wrapped route return
-    """
-    def requires_auth_decorator(f):
-        @wraps(f)
-        def wrapper(*args, **kwargs):
-            try:
-                # it should use the get_token_auth_header method to get the token
-                token = get_token_auth_header()
-                # it should use the verify_decode_jwt method to decode the jwt
-                payload = verify_decode_jwt(token)
-                # it should use the check_permissions method validate claims and check the requested permission
-                payload['token'] = token
-                check_permissions(permission, payload)
-            except AuthError as e:
-                abort(make_response(jsonify(e.error), e.status_code))
-            return f(payload, *args, **kwargs)
-        return wrapper
-    # return the decorator which passes the decoded payload to the decorated method
-    return requires_auth_decorator
-
-
 def view_requires_sign_in(f):
     """
     Decorator to require Authorization for a given route without any specific permissions
@@ -243,10 +201,19 @@ def view_requires_sign_in(f):
             token = get_token_auth_header()
             payload = verify_decode_jwt(token)
             payload['token'] = token
+            user = verify_user(payload)
+            if current_user.is_anonymous:
+                log.debug(f'signing in user: {user.alternate_id}')
+                login_user(user)
+            elif current_user.alternate_id != user.alternate_id:
+                raise AuthError({
+                    'code': 'client_session_already_bound',
+                    'description': 'Session already bound to different user credentials.'
+                }, 401)
         except AuthError as e:
             abort(make_response(jsonify(e.error), e.status_code))
         # self is a FlaskView object
-        return f(self, payload, *args, **kwargs)
+        return f(self, user, *args, **kwargs)
     return wrapper
 
 
@@ -274,3 +241,58 @@ def view_requires_auth(permission=''):
         return wrapper
     # return the decorator which passes the decoded payload to the decorated method
     return requires_auth_decorator
+
+
+def requires_sign_in(f):
+    """
+    Decorator to require Authorization for a given route without any specific permissions
+    :param f: function to wrap
+    :return: function with wrapper
+    """
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        try:
+            token = get_token_auth_header()
+            payload = verify_decode_jwt(token)
+            payload['token'] = token
+            user = verify_user(payload)
+            if current_user.is_anonymous:
+                log.debug(f'signing in user: {profile.alternate_id}')
+                login_user(user)
+            elif current_user.alternate_id != user.alternate_id:
+                raise AuthError({
+                    'code': 'client_session_already_bound',
+                    'description': 'Session already bound to different user credentials.'
+                }, 401)
+        except AuthError as e:
+            abort(make_response(jsonify(e.error), e.status_code))
+        return f(user, *args, **kwargs)
+    return wrapper
+
+'''
+def requires_auth(permission=''):
+    """
+    Decorator to require Authorization and specific permissions for a given route
+    :param permission: permissions required for wrapped route
+    :return: double wrapped route return
+    """
+    def requires_auth_decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            try:
+                # it should use the get_token_auth_header method to get the token
+                token = get_token_auth_header()
+                # it should use the verify_decode_jwt method to decode the jwt
+                payload = verify_decode_jwt(token)
+                # it should use the check_permissions method validate claims and check the requested permission
+                payload['token'] = token
+                check_permissions(permission, payload)
+            except AuthError as e:
+                abort(make_response(jsonify(e.error), e.status_code))
+            return f(payload, *args, **kwargs)
+        return wrapper
+    # return the decorator which passes the decoded payload to the decorated method
+    return requires_auth_decorator
+'''
+
+

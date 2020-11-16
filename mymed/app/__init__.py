@@ -45,7 +45,8 @@ def create_app(config_yaml=None):
     set_app_mode(app)
     lm.init_app(app)
     # setup csrf
-    csrf.init_app(app)
+    if not app.testing:
+        csrf.init_app(app)
 
     # setup db
     init_db(app, db)
@@ -61,6 +62,7 @@ def set_app_mode(app):
     setup = app.config['SETUP']
     app.env = setup.APP_MODE
     if app.env == 'test':
+        # app.config['SERVER_NAME'] = f"{deepcopy(app.config['SETUP'].PROJECT_NAME)}.dev"
         app.testing = True
         app.debug = True
         app.live = False

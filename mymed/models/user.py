@@ -35,7 +35,7 @@ class UserProfile(UserMixin, Model):
     given_name = db.Column(db.String(256), nullable=True)
     locale = db.Column(db.String(16), default='en', nullable=False)
     updated_at = db.Column(ArrowType, default=utcnow, index=True)
-    email_verified = db.Column(db.Boolean, nullable=True, default=True)
+    email_verified = db.Column(db.Boolean, nullable=True, default=False)
     patron = db.relationship('Patron', uselist=False, back_populates="userprofile")  # 1-to-1
     provider = db.relationship('Provider', uselist=False, back_populates="userprofile")  # 1-to-1
     scheduler = db.relationship('Scheduler', uselist=False, back_populates="userprofile")  # 1-to-1
@@ -110,7 +110,7 @@ class Patron(Model):
         id (primary key)
         created_at (creation date)
     """
-    records = db.relationship('Record', backref='patron', lazy=True)
+    records = db.relationship('Record', backref='patron', lazy=True)  # 1 to many
     userprofile_id = db.Column(db.Integer, db.ForeignKey('userprofile.id'))
     userprofile = db.relationship("UserProfile", back_populates='patron')
 
